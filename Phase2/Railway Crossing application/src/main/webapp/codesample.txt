@@ -1,0 +1,161 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+class RailwayCrossing {
+    private String name;
+    private boolean isOpen;
+
+    public RailwayCrossing(String name) {
+        this.name = name;
+        this.isOpen = false;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean isOpen) {
+        this.isOpen = isOpen;
+    }
+}
+
+class RailwayCrossingSystem {
+    private List<RailwayCrossing> crossings;
+    private Map<String, Boolean> favorites;
+    private String adminUsername = "admin";
+    private String adminPassword = "admin123";
+
+    public RailwayCrossingSystem() {
+        this.crossings = new ArrayList<>();
+        this.favorites = new HashMap<>();
+    }
+
+    public void registerAccount(String username, String password) {
+        // Implement registration logic
+        // This can include storing user information in a database
+    }
+
+    public boolean login(String username, String password) {
+        // Implement login logic
+        return adminUsername.equals(username) && adminPassword.equals(password);
+    }
+
+    public void addRailwayCrossing(String crossingName) {
+        crossings.add(new RailwayCrossing(crossingName));
+    }
+
+    public void deleteRailwayCrossing(String crossingName) {
+        crossings.removeIf(crossing -> crossing.getName().equals(crossingName));
+        favorites.remove(crossingName); // Remove from favorites if exists
+    }
+
+    public void updateRailwayCrossingStatus(String crossingName, boolean isOpen) {
+        for (RailwayCrossing crossing : crossings) {
+            if (crossing.getName().equals(crossingName)) {
+                crossing.setOpen(isOpen);
+                break;
+            }
+        }
+    }
+
+    public void displayCrossings() {
+        System.out.println("List of Railway Crossings:");
+        for (RailwayCrossing crossing : crossings) {
+            System.out.println(crossing.getName() + " - Status: " + (crossing.isOpen() ? "Open" : "Closed"));
+        }
+    }
+
+    public void markAsFavorite(String crossingName) {
+        favorites.put(crossingName, true);
+    }
+
+    public void displayFavorites() {
+        System.out.println("List of Favorite Railway Crossings:");
+        for (Map.Entry<String, Boolean> entry : favorites.entrySet()) {
+            System.out.println(entry.getKey());
+        }
+    }
+}
+
+public class RailwayCrossingApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        RailwayCrossingSystem system = new RailwayCrossingSystem();
+
+        // Public User Operations
+        System.out.println("Public User Operations:");
+        System.out.print("Enter your username: ");
+        String publicUsername = scanner.nextLine();
+        System.out.print("Enter your password: ");
+        String publicPassword = scanner.nextLine();
+
+        // Simulating registration (not shown in detail here)
+        system.registerAccount(publicUsername, publicPassword);
+
+        // Simulating login
+        boolean loginSuccess = system.login(publicUsername, publicPassword);
+        if (loginSuccess) {
+            System.out.println("Login successful.");
+
+            // Display railway crossings
+            system.displayCrossings();
+
+            // Search railway crossings
+            System.out.print("Enter the name of the crossing to search: ");
+            String searchName = scanner.nextLine();
+            // Implement search logic
+
+            // Mark a crossing as favorite
+            System.out.print("Enter the name of the crossing to mark as favorite: ");
+            String favoriteName = scanner.nextLine();
+            system.markAsFavorite(favoriteName);
+
+            // View favorite crossings
+            system.displayFavorites();
+        } else {
+            System.out.println("Login failed. Exiting application.");
+            return;
+        }
+
+        // Admin Operations
+        System.out.println("\nAdmin Operations:");
+        System.out.print("Enter admin username: ");
+        String adminUsername = scanner.nextLine();
+        System.out.print("Enter admin password: ");
+        String adminPassword = scanner.nextLine();
+
+        // Admin login
+        if (system.login(adminUsername, adminPassword)) {
+            System.out.println("Admin login successful.");
+
+            // Add a new crossing
+            System.out.print("Enter the name of the new crossing to add: ");
+            String newCrossingName = scanner.nextLine();
+            system.addRailwayCrossing(newCrossingName);
+
+            // Delete a crossing
+            System.out.print("Enter the name of the crossing to delete: ");
+            String deleteCrossingName = scanner.nextLine();
+            system.deleteRailwayCrossing(deleteCrossingName);
+
+            // Update crossing status
+            System.out.print("Enter the name of the crossing to update: ");
+            String updateCrossingName = scanner.nextLine();
+            System.out.print("Enter the new status (true for open, false for closed): ");
+            boolean newStatus = scanner.nextBoolean();
+            system.updateRailwayCrossingStatus(updateCrossingName, newStatus);
+
+            // Display all crossings after admin operations
+            system.displayCrossings();
+        } else {
+            System.out.println("Admin login failed. Exiting application.");
+        }
+    }
+}
